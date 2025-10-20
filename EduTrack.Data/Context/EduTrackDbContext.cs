@@ -17,5 +17,21 @@ namespace EduTrack.Data.Context
                 optionsBuilder.UseSqlite("Data Source=EduTrack.db");
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Student>(entity =>
+            {
+                entity.Property(e => e.FirstName).HasMaxLength(100);
+                entity.Property(e => e.LastName).HasMaxLength(100);
+                entity.Property(e => e.Email).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<Course>(entity =>
+            {
+                entity.Property(e => e.Name).HasMaxLength(255);
+            });
+        }
+
     }
 }
