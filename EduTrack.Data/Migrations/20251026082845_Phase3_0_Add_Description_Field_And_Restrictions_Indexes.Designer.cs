@@ -3,6 +3,7 @@ using System;
 using EduTrack.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EduTrack.Data.Migrations
 {
     [DbContext(typeof(EduTrackDbContext))]
-    partial class EduTrackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026082845_Phase3_0_Add_Description_Field_And_Restrictions_Indexes")]
+    partial class Phase3_0_Add_Description_Field_And_Restrictions_Indexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");

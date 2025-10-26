@@ -22,14 +22,18 @@ namespace EduTrack.Data.Context
         {
             modelBuilder.Entity<Student>(entity =>
             {
-                entity.Property(e => e.FirstName).HasMaxLength(100);
-                entity.Property(e => e.LastName).HasMaxLength(100);
-                entity.Property(e => e.Email).HasMaxLength(255);
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.LastName);
+                entity.Property(e => e.FirstName).HasMaxLength(100).IsUnicode(true);
+                entity.Property(e => e.LastName).HasMaxLength(100).IsUnicode(true);
+                entity.Property(e => e.Email).HasMaxLength(255).IsUnicode(true);
             });
 
             modelBuilder.Entity<Course>(entity =>
             {
-                entity.Property(e => e.Name).HasMaxLength(255);
+                entity.HasIndex(e => e.Name).IsUnique();
+                entity.Property(e => e.Name).HasMaxLength(255).IsUnicode(true);
+                entity.Property(e => e.Description).HasMaxLength(500).IsUnicode(true);
             });
         }
 
