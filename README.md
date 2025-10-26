@@ -60,7 +60,7 @@ This project follows **Agile** and **Domain-Driven Design (DDD)** principles to 
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/EduTrack.git
+git clone https://github.com/MrkTheCoder/edu-track-avalonia-desktop.git
 
 # Navigate to project folder
 cd EduTrack/EduTrack.Project/EduTrack
