@@ -32,8 +32,8 @@ This project follows **Agile** and **Domain-Driven Design (DDD)** principles to 
 
 | Phase | Focus | Status |
 |:------|:------|:-------|
-| 1. Core Setup | Solution structure, EF Core, and CI configuration | ❇️ In progress ✅✅⬜⬜⬜ (40%)|
-| 2. Domain Models | Entities, value objects, and data validation | ❇️ In progress ✅⬜⬜⬜⬜ (20%) |
+| 1. Core Setup | Solution structure, EF Core, and CI configuration | ✅✅✅⬜⬜ (60%)|
+| 2. Domain Models | Entities, value objects, and data validation | ✅✅✅⬜⬜ (60%) |
 | 3. UI Foundation | Avalonia MVVM and navigation shell | ⏳ Planned |
 | 4. Core Features | Student, class, and course management modules | ⏳ Planned |
 | 5. Testing & QA | Unit/integration tests and validation rules | ⏳ Planned |
