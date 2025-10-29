@@ -29,6 +29,7 @@ namespace EduTrack.Core.Validations
                     return age is >= 15 and <= 80;
                 })
                 .WithMessage("Student age must be between 15 and 80 years.");
+
         }
     }
 }
