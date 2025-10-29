@@ -1,6 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Logging;
+using EduTrack.App.Services;
+using EduTrack.Core.Interfaces;
+using EduTrack.Core.Models;
+using EduTrack.Core.Services.Interfaces;
+using EduTrack.Core.Validations;
 using EduTrack.Data.Context;
+using EduTrack.Data.Repositories;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,9 +24,9 @@ namespace EduTrack.App
         public static void Main(string[] args)
         {
             var serviceProvider = ConfigureServices();
-            
-            // Uncomment for test logging
-            TestingLogging(serviceProvider); // pass DI provider
+
+            // Uncomment the following line for test logging
+            // TestingLogging(serviceProvider); // pass DI provider
 
             // Initialize the database before launching Avalonia UI
             InitializeDatabase();
@@ -72,6 +79,9 @@ namespace EduTrack.App
             // register DbContext for design-time / runtime, repository & services will be added later
             services.AddDbContext<EduTrackDbContext>(options =>
                 options.UseSqlite("Data Source=EduTrack.db"));
+            services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IValidator<Student>, StudentValidator>();
+            services.AddScoped<IStudentService, StudentService>();
 
             return services.BuildServiceProvider();
         }

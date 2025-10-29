@@ -19,41 +19,51 @@ namespace EduTrack.Data.Repositories
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) 
             => await _dbSet.Where(predicate).ToListAsync();
 
-        public async Task AddAsync(T entity) 
-            => await _dbSet.AddAsync(entity);
+        public async Task AddAsync(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-        public async Task AddRangeAsync(IEnumerable<T> entities) 
-            => await _dbSet.AddRangeAsync(entities);
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task RemoveAsync(T entity)
         {
             _dbSet.Remove(entity);
-            await Task.CompletedTask;
+            await _context.SaveChangesAsync();
         }
 
         public async Task RemoveAllAsync()
         {
             var allEntities = await GetAllAsync();
             _dbSet.RemoveRange(allEntities);
+            await _context.SaveChangesAsync();
         }
 
         public async Task RemoveByIdAsync(int id)
         {
             var entity = await GetByIdAsync(id);
             if (entity != null)
+            {
                 _dbSet.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task RemoveRangeAsync(IEnumerable<T> entities)
         {
             _dbSet.RemoveRange(entities);
-            await Task.CompletedTask;
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await Task.CompletedTask;
+            await _context.SaveChangesAsync();
         }
     }
 }

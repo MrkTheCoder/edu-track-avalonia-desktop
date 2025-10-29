@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace EduTrack.Core.Validations
 {
-    public class StudentValidations : AbstractValidator<Student>
+    public class StudentValidator : AbstractValidator<Student>
     {
-        public StudentValidations()
+        public StudentValidator()
         {
             RuleFor(s => s.FirstName)
                 .NotEmpty().WithMessage("First name is required.")
