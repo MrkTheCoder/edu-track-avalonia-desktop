@@ -7,7 +7,6 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ValidationException = EduTrack.Core.Exceptions.ValidationException;
 
@@ -24,16 +23,15 @@ namespace EduTrack.App.Services
         private readonly IValidator<Student> _validator = validator ?? throw new ArgumentNullException(nameof(validator));
         private readonly ILogger<StudentService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        public async Task<Student?> GetByIdAsync(int id)
+        public async Task<Student> GetByIdAsync(int id)
         {
             try
             {
-                return await _repo.GetByIdAsync(id);
-
+                return await EnsureStudentExistsAsync(id);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not EntityNotFoundException)
             {
-                _logger.LogError(ex, "Error retrieving student by id '{Id}'", id);
+                                           _logger.LogError(ex, "Error retrieving student by id '{Id}'", id);
                 throw new ServiceException($"Failed to retrieve student {id}.", ex);
             }
         }
@@ -106,9 +104,10 @@ namespace EduTrack.App.Services
 
             try
             {
+                await CheckEmailDuplicationAsync(entity.Email);
                 await _repo.AddAsync(entity);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DuplicateEntityException)
             {
                 _logger.LogError(ex, "Error adding student, {student}", $"FN:'{(entity.FirstName ?? "null")}', LN:'{entity.LastName}', Email:`{entity.Email}`, DOB:'{entity.DateOfBirth}'");
                 throw new ServiceException("Failed to add student.", ex);
@@ -120,9 +119,10 @@ namespace EduTrack.App.Services
         {
             try
             {
+                await EnsureStudentExistsAsync(id);
                 await _repo.RemoveByIdAsync(id);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not EntityNotFoundException)
             {
                 _logger.LogError(ex, "Error removing student id '{Id}'", id);
                 throw new ServiceException($"Failed to remove student {id}.", ex);
@@ -135,11 +135,12 @@ namespace EduTrack.App.Services
 
             try
             {
+                await CheckEmailDuplicationAsync(entity.Email);
                 await _repo.UpdateAsync(entity);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not DuplicateEntityException)
             {
-                _logger.LogError(ex, "Error updating student id '{Id}'", entity.Id);
+                _logger.LogError(ex, "Error updating student '{StudentId}'", entity.Id);
                 throw new ServiceException("Failed to update student.", ex);
             }
         }
@@ -149,6 +150,26 @@ namespace EduTrack.App.Services
             var validation = await _validator.ValidateAsync(entity);
             if (!validation.IsValid)
                 throw new ValidationException("Validation failed: " + string.Join("; ", validation.Errors));
+        }
+
+        private async Task<Student> EnsureStudentExistsAsync(int id)
+        {
+            var student = await _repo.GetByIdAsync(id);
+            if (student == null)
+            {
+                _logger.LogError("Student with ID '{id}' not found.", id);
+                throw new EntityNotFoundException($"Student with ID {id} not found.");
+            }
+            return student;
+        }
+
+        private async Task CheckEmailDuplicationAsync(string email)
+        {
+            if (await _repo.ExistsAsync(s => s.Email == email))
+            {
+                _logger.LogError("Student with same email `{email}` exists.il ", email);
+                throw new DuplicateEntityException($"Student with same email `{email}` already exists.");
+            }
         }
     }
 }

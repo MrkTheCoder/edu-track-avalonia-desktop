@@ -19,6 +19,9 @@ namespace EduTrack.Data.Repositories
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) 
             => await _dbSet.Where(predicate).ToListAsync();
 
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+            => await _dbSet.AnyAsync(predicate);
+
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
