@@ -7,7 +7,9 @@ using FluentValidation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ValidationException = EduTrack.Core.Exceptions.ValidationException;
 
 namespace EduTrack.App.Services
 {
@@ -113,6 +115,7 @@ namespace EduTrack.App.Services
             }
         }
 
+
         public async Task RemoveByIdAsync(int id)
         {
             try
@@ -145,7 +148,7 @@ namespace EduTrack.App.Services
         {
             var validation = await _validator.ValidateAsync(entity);
             if (!validation.IsValid)
-                throw new ServiceException("Validation failed: " + string.Join("; ", validation.Errors));
+                throw new ValidationException("Validation failed: " + string.Join("; ", validation.Errors));
         }
     }
 }
