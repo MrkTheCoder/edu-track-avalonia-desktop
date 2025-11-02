@@ -14,6 +14,7 @@
                 // 🔄 In production or after multiple migrations, replace with:
                 //     context.Database.Migrate();
                 // to apply any pending migrations automatically at runtime.
+
                 // Create the database if it does not exist
                 context.Database.EnsureCreated();
 

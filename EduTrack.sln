@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduTrack.Tests", "EduTrack.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduTrack.App.Tests", "EduTrack.App.Tests\EduTrack.App.Tests.csproj", "{174E9FF4-9964-4EB6-95A5-9696030FB299}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EduTrack.IntegrationTests", "EduTrack.IntegrationTests\EduTrack.IntegrationTests.csproj", "{137B7AC9-6B12-4BB9-A00A-1104EB244A1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{174E9FF4-9964-4EB6-95A5-9696030FB299}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{174E9FF4-9964-4EB6-95A5-9696030FB299}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{174E9FF4-9964-4EB6-95A5-9696030FB299}.Release|Any CPU.Build.0 = Release|Any CPU
+		{137B7AC9-6B12-4BB9-A00A-1104EB244A1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{137B7AC9-6B12-4BB9-A00A-1104EB244A1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{137B7AC9-6B12-4BB9-A00A-1104EB244A1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{137B7AC9-6B12-4BB9-A00A-1104EB244A1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
