@@ -135,10 +135,11 @@ namespace EduTrack.App.Services
 
             try
             {
+                await EnsureStudentExistsAsync(entity.Id);
                 await CheckEmailDuplicationAsync(entity.Email);
                 await _repo.UpdateAsync(entity);
             }
-            catch (Exception ex) when (ex is not DuplicateEntityException)
+            catch (Exception ex) when (ex is not (DuplicateEntityException or EntityNotFoundException))
             {
                 _logger.LogError(ex, "Error updating student '{StudentId}'", entity.Id);
                 throw new ServiceException("Failed to update student.", ex);
