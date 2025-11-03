@@ -27,7 +27,7 @@ namespace EduTrack.IntegrationTests.Database
                     },
                     new Student
                     {
-                        FirstName = "William",
+                        FirstName = "Bobbi",
                         LastName = "Brown",
                         Email = "william.brown@email.com",
                         DateOfBirth = new DateTime(1974, 9, 10)

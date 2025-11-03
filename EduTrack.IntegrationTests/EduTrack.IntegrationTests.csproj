@@ -32,11 +32,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EduTrack.App\EduTrack.App.csproj" />
     <ProjectReference Include="..\EduTrack.Data\EduTrack.Data.csproj" />
   </ItemGroup>
 

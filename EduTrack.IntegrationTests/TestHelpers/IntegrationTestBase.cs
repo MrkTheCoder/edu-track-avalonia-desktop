@@ -12,8 +12,8 @@ namespace EduTrack.IntegrationTests.TestHelpers
     {
         protected readonly SqliteConnection Connection;
         protected readonly DbContextOptions<EduTrackDbContext> Options;
-        protected readonly EduTrackDbContext Context;
-        protected readonly ILoggerFactory LoggerFactory;
+        protected internal readonly EduTrackDbContext Context;
+        protected internal readonly ILoggerFactory LoggerFactory;
 
         public IntegrationTestBase()
         {
@@ -75,11 +75,12 @@ namespace EduTrack.IntegrationTests.TestHelpers
 
         public async ValueTask DisposeAsync()
         {
-            await Context.DisposeAsync();
-            await Connection.DisposeAsync();
+            if (Context is not null) await Context.DisposeAsync();
+            if (Connection is not null) await Connection.DisposeAsync();
+            LoggerFactory?.Dispose();
         }
 
-        protected async Task ResetDatabaseAsync()
+        protected internal async Task ResetDatabaseAsync()
         {
             await Context.Database.EnsureDeletedAsync();
             await Context.Database.EnsureCreatedAsync();
