@@ -150,7 +150,10 @@ namespace EduTrack.App.Services
         {
             var validation = await _validator.ValidateAsync(entity);
             if (!validation.IsValid)
+            {
+                _logger.LogError("Validation failed: {ValidationErrors}", string.Join("; ", validation.Errors));
                 throw new ValidationException("Validation failed: " + string.Join("; ", validation.Errors));
+            }
         }
 
         private async Task<Student> EnsureStudentExistsAsync(int id)
@@ -168,7 +171,7 @@ namespace EduTrack.App.Services
         {
             if (await _repo.ExistsAsync(s => s.Email == email))
             {
-                _logger.LogError("Student with same email `{email}` exists.il ", email);
+                _logger.LogError("Student with same email `{email}` exists.", email);
                 throw new DuplicateEntityException($"Student with same email `{email}` already exists.");
             }
         }
