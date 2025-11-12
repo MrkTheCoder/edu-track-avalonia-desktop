@@ -18,6 +18,9 @@ namespace EduTrack.IntegrationTests.Services
     [Collection("IntegrationTests")]
     public class StudentServiceTests : IClassFixture<IntegrationTestFixture>
     {
+        // Initializes StudentService with in-memory EF context + logger + validator
+        #region Setup
+
         private readonly IStudentService _service;
         private readonly EduTrackDbContext _context;
         private readonly IntegrationTestFixture _fixture;
@@ -36,9 +39,6 @@ namespace EduTrack.IntegrationTests.Services
             _service = new StudentService(repository, validator, logger);
         }
 
-        // Initializes StudentService with in-memory EF context + logger + validator
-        #region Setup
-
         private Student CreateValidStudent(string? email = null)
         {
             return new Student
@@ -54,6 +54,7 @@ namespace EduTrack.IntegrationTests.Services
 
         // Verify happy-path CRUD behaviors (Add, GetById, Update, Remove, Search).
         #region Successful operations
+
         [Fact]
         [Trait("IntegrationTests", "Happy Path")]
         public async Task AddAsync_ValidStudent_ShouldPersistAndReturnId()

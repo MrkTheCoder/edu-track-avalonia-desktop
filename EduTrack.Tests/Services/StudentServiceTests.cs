@@ -16,6 +16,9 @@ namespace EduTrack.Tests.Services
 {
     public class StudentServiceTests
     {
+        // Initializes mocks
+        #region Setup
+
         private readonly Mock<IStudentRepository> _repoMock;
         private readonly Mock<IValidator<Student>> _validatorMock;
         private readonly Mock<ILogger<StudentService>> _loggerMock;
@@ -33,8 +36,6 @@ namespace EduTrack.Tests.Services
             
             _service = new StudentService(_repoMock.Object, _validatorMock.Object, _loggerMock.Object);
         }
-
-        #region Setup
 
         private static Student CreateValidStudent(int id, string? email = null) 
             => new()
