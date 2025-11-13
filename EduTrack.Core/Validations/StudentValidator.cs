@@ -1,5 +1,6 @@
 ﻿using EduTrack.Core.Models;
 using FluentValidation;
+using FluentValidation.Validators;
 
 namespace EduTrack.Core.Validations
 {
@@ -18,7 +19,13 @@ namespace EduTrack.Core.Validations
             RuleFor(s => s.Email)
                 .NotEmpty().WithMessage("Email is required.")
                 .MaximumLength(255).WithMessage("Email cannot exceed 255 characters.")
-                .EmailAddress().WithMessage("Invalid email format.");
+                // The `EmailValidationMode.Net4xRegex` is deprecated. Although it is obsolete, 
+                // it provides more thorough validation compared to other options. 
+                // For more details, see: https://docs.fluentvalidation.net/en/latest/built-in-validators.html#email-validator
+#pragma warning disable CS0618 // Type or member is obsolete
+                // TODO: If a future update to FluentValidation resolves this issue, revisit this line.
+                .EmailAddress(EmailValidationMode.Net4xRegex).WithMessage("Invalid email format.");
+#pragma warning restore CS0618 // Type or member is obsolete
 
             RuleFor(s => s.DateOfBirth)
                 .NotEmpty().WithMessage("Date of birth is required.")
