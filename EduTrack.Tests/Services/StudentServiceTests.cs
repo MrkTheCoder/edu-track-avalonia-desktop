@@ -114,6 +114,23 @@ namespace EduTrack.Tests.Services
 
         [Fact]
         [Trait("StudentService_UnitTests", "Happy Path")]
+        public async Task AddAsync_Email_ShouldBeNormalizedBeforeSave()
+        {
+            // Arrange
+            var newStudent = CreateValidStudent(2);
+            newStudent.Email = "MIXEDCASE@Example.Com";
+
+            _repoMock.Setup(r => r.ExistsAsync(It.IsAny<Expression<Func<Student, bool>>>())).ReturnsAsync(false);
+
+            // Act
+            await _service.AddAsync(newStudent);
+
+            // Assert
+            newStudent.Email.Should().Be("mixedcase@example.com");
+        }
+
+        [Fact]
+        [Trait("StudentService_UnitTests", "Happy Path")]
         public async Task RemoveByIdAsync_ExistingStudent_ShouldInvokeRepositoryRemoveByIdAsyncOnce()
         {
             // Arrange
@@ -204,9 +221,11 @@ namespace EduTrack.Tests.Services
             results.Should().OnlyContain(s => s.LastName.StartsWith("Martin") || s.LastName.StartsWith("Marley"));
         }
 
-        [Fact]
+        [Theory]
         [Trait("StudentService_UnitTests", "Happy Path")]
-        public async Task SearchByNameAsync_MatchingFirstAndLastNames_ShouldFiltersByBothOnce()
+        [InlineData("Mar", "Mar")]
+        [InlineData("mar", "mar")]
+        public async Task SearchByNameAsync_MatchingFirstAndLastNames_CaseInsensitive_ShouldFiltersByBothOnce(string firstName, string lastName)
         {
             // Arrange
             var allStudents = new List<Student>
@@ -220,7 +239,7 @@ namespace EduTrack.Tests.Services
             SetupFindAsync(allStudents);
 
             // Act
-            var results = await _service.SearchByNameAsync("Mar", "Mar");
+            var results = await _service.SearchByNameAsync(firstName, lastName);
 
             // Assert
             //  Testing Repository Behavior
@@ -233,7 +252,8 @@ namespace EduTrack.Tests.Services
 
         [Theory]
         [Trait("StudentService_UnitTests", "Happy Path")]
-        [InlineData("john", 2, new[] { "John Smith", "Johnny Doe" })]   // Partial Match Case: First name contains "john"
+        [InlineData("john", 2, new[] { "John Smith", "Johnny Doe" })]   // Partial Match Case: First name contains "john" 
+        [InlineData("jOhN", 2, new[] { "John Smith", "Johnny Doe" })]   // Partial Match Case: First name contains "jOhN" Make sure case-insensetive
         [InlineData("n.s", 1, new[] { "John Smith" })]                  // Partial Match Case: First and Last name contain "n.s"
         [InlineData("john.smith@mail.com", 1, new[] { "John Smith" })]  // Full Match Case: On email address
         public async Task SearchByEmailAsync_VariousMatchingCriteria_ShouldFilterResultsOnce(

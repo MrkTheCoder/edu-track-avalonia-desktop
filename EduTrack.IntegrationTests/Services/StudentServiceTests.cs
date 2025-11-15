@@ -15,7 +15,7 @@ using ValidationException = EduTrack.Core.Exceptions.ValidationException;
 
 namespace EduTrack.IntegrationTests.Services
 {
-    [Collection("IntegrationTests")]
+    [Collection("StudentService_IntegrationTests")]
     public class StudentServiceTests : IClassFixture<IntegrationTestFixture>
     {
         // Initializes StudentService with in-memory EF context + logger + validator
@@ -56,7 +56,7 @@ namespace EduTrack.IntegrationTests.Services
         #region Successful operations
 
         [Fact]
-        [Trait("IntegrationTests", "Happy Path")]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
         public async Task AddAsync_ValidStudent_ShouldPersistAndReturnId()
         {
             //Arrange
@@ -74,7 +74,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Happy Path")]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
         public async Task GetByIdAsync_ExistingStudent_ShouldReturnStudent()
         {
             // Arrange
@@ -90,7 +90,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Happy Path")]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
         public async Task UpdateAsync_ExistingStudent_ShouldModifyFields()
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Happy Path")]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
         public async Task RemoveByIdAsync_ExistingStudent_ShouldDeleteRecord()
         {
             // Arrange
@@ -128,7 +128,7 @@ namespace EduTrack.IntegrationTests.Services
         }
         
         [Fact]
-        [Trait("IntegrationTests", "Happy Path")]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
         public async Task SearchByNameAsync_MatchingName_ShouldReturnResults()
         {
             // Arrange
@@ -142,13 +142,46 @@ namespace EduTrack.IntegrationTests.Services
             results.Should().OnlyContain(s => s.FirstName.Contains(targetName, StringComparison.OrdinalIgnoreCase));
         }
 
+        [Fact]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
+        public async Task SearchByEmailAsync_EmailSearch_ShouldBeCaseInsensitive()
+        {
+            // Arrange
+            await ResetAsync();
+            var existing = _context.Students.First();
+
+            // Act
+            var results = await _service.SearchByEmailAsync(existing.Email.ToUpperInvariant());
+
+            // Assert
+            results.Should().ContainSingle(s => s.Email == existing.Email);
+        }
+
+        [Fact]
+        [Trait("StudentService_IntegrationTests", "Happy Path")]
+        public async Task SearchByNameAsync_NameSearch_ShouldBeCaseInsensitive()
+        {
+            // Arrange
+            await _fixture.Base.ResetDatabaseAsync();
+            var existing = _context.Students.First();
+
+            // Act
+            var results = await _service.SearchByNameAsync(existing.LastName.ToUpperInvariant(), existing.FirstName.ToUpperInvariant());
+
+            // Assert
+            results.Should().NotBeEmpty();
+            results.Should().ContainSingle(s =>
+                s.FirstName.Equals(existing.FirstName, StringComparison.OrdinalIgnoreCase) &&
+                s.LastName.Equals(existing.LastName, StringComparison.OrdinalIgnoreCase));
+        }
+
         #endregion
 
         // Simulate duplicate email, missing student, and service failures.
         #region Exception cases
 
         [Fact]
-        [Trait("IntegrationTests", "Exception Case")]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
         public async Task AddAsync_DuplicateEmail_ShouldThrowDuplicateEntityException()
         {
             // Arrange
@@ -171,7 +204,24 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Exception Case")]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
+        public async Task AddAsync_EmailWithDifferentCase_ShouldThrowDuplicateEntityException()
+        {
+            // Arrange
+            var existing = _context.Students.First();
+            var duplicate = CreateValidStudent(existing.Email.ToUpperInvariant());
+
+            // Act
+            var act = async () => await _service.AddAsync(duplicate);
+
+            // Assert
+            await act.Should()
+                .ThrowAsync<DuplicateEntityException>()
+                .WithMessage($"*{existing.Email.ToLowerInvariant()}*");
+        }
+
+        [Fact]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
         public async Task AddAsync_InvalidStudent_ShouldThrowValidationException()
         {
             // Arrange
@@ -193,7 +243,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Exception Case")]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
         public async Task RemoveByIdAsync_NonExistingStudent_ShouldThrowEntityNotFoundException()
         {
             // Arrange
@@ -209,7 +259,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Exception Case")]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
         public async Task UpdateAsync_NonExistingStudent_ShouldThrowEntityNotFoundException()
         {
             // Arrange
@@ -230,7 +280,7 @@ namespace EduTrack.IntegrationTests.Services
         }
 
         [Fact]
-        [Trait("IntegrationTests", "Exception Case")]
+        [Trait("StudentService_IntegrationTests", "Exception Case")]
         public async Task GetByIdAsync_RepositoryThrows_ShouldWrapInServiceException()
         {
             // Arrange

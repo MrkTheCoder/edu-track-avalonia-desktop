@@ -89,6 +89,7 @@ namespace EduTrack.IntegrationTests.TestHelpers
 
         protected virtual Task SeedTestDataAsync()
         {
+            Context.ChangeTracker.Clear();
             TestDataSeeder.SeedBasicData(Context);
             return Context.SaveChangesAsync();
         }

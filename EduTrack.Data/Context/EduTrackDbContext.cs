@@ -26,7 +26,9 @@ namespace EduTrack.Data.Context
                 entity.HasIndex(e => e.LastName);
                 entity.Property(e => e.FirstName).HasMaxLength(100).IsUnicode(true);
                 entity.Property(e => e.LastName).HasMaxLength(100).IsUnicode(true);
-                entity.Property(e => e.Email).HasMaxLength(255).IsUnicode(true);
+                entity.Property(e => e.Email).HasMaxLength(255).IsUnicode(false)
+                    .HasConversion(v => v.ToLowerInvariant(), 
+                        v => v.ToLowerInvariant());
             });
 
             modelBuilder.Entity<Course>(entity =>

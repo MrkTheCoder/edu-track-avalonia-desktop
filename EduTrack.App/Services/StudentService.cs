@@ -53,7 +53,8 @@ namespace EduTrack.App.Services
         {
             try
             {
-                return await _repo.FindAsync(s => s.Email.Contains(email));
+                var normalaizedEmail = NormalizedString(email);
+                return await _repo.FindAsync(s => s.Email.ToLower().Contains(normalaizedEmail));
             }
             catch (Exception ex)
             {
@@ -67,8 +68,8 @@ namespace EduTrack.App.Services
             try
             {
                 if (string.IsNullOrWhiteSpace(firstName))
-                    return await _repo.FindAsync(s => s.LastName.Contains(lastName));
-                return await _repo.FindAsync(s => s.LastName.Contains(lastName) && s.FirstName.Contains(firstName));
+                    return await _repo.FindAsync(s => s.LastName.ToLower().Contains(lastName.ToLower()));
+                return await _repo.FindAsync(s => s.LastName.ToLower().Contains(lastName.ToLower()) && s.FirstName.ToLower().Contains(firstName.ToLower()));
             }
             catch (Exception ex)
             {
@@ -105,6 +106,7 @@ namespace EduTrack.App.Services
             try
             {
                 await CheckEmailDuplicationAsync(entity.Email);
+                entity.Email = NormalizedString(entity.Email);
                 await _repo.AddAsync(entity);
             }
             catch (Exception ex) when (ex is not DuplicateEntityException)
@@ -136,6 +138,7 @@ namespace EduTrack.App.Services
             {
                 await EnsureStudentExistsAsync(entity.Id);
                 await CheckEmailDuplicationAsync(entity.Email);
+                entity.Email = NormalizedString(entity.Email);
                 await _repo.UpdateAsync(entity);
             }
             catch (Exception ex) when (ex is not (DuplicateEntityException or EntityNotFoundException))
@@ -168,11 +171,15 @@ namespace EduTrack.App.Services
 
         private async Task CheckEmailDuplicationAsync(string email)
         {
-            if (await _repo.ExistsAsync(s => s.Email == email))
+            var normalizedEmail = NormalizedString(email);
+            if (await _repo.ExistsAsync(s => s.Email == normalizedEmail))
             {
                 _logger.LogError("Student with same email `{email}` exists.", email);
-                throw new DuplicateEntityException($"Student with same email `{email}` already exists.");
+                throw new DuplicateEntityException($"Student with same email `{normalizedEmail}` already exists.");
             }
         }
+
+        private string NormalizedString(string text) =>
+            text.ToLowerInvariant();
     }
 }
